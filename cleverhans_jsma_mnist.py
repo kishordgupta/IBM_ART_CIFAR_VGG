@@ -2,12 +2,11 @@
 #pip install ipdb==0.9.0
 #pip install --upgrade ipykernel
 
-
 from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 from __future__ import unicode_literals
-
+import matplotlib.pyplot as plt
 import logging
 import numpy as np
 from six.moves import xrange
@@ -143,11 +142,11 @@ def mnist_tutorial_jsma(train_start=0, train_end=60000, test_start=0,
     # For the grid visualization, keep original images along the diagonal
     grid_viz_data[current_class, current_class, :, :, :] = np.reshape(
         sample, (img_rows, img_cols, nchannels))
-
+    i=0
     # Loop over all target classes
     for target in target_classes:
       print('Generating adv. example for target class %i' % target)
-
+      i=i+1
       # This call runs the Jacobian-based saliency map approach
       one_hot_target = np.zeros((1, nb_classes), dtype=np.float32)
       one_hot_target[0, target] = 1
@@ -162,7 +161,8 @@ def mnist_tutorial_jsma(train_start=0, train_end=60000, test_start=0,
       test_in_reshape = x_test[sample_ind].reshape(-1)
       nb_changed = np.where(adv_x_reshape != test_in_reshape)[0].shape[0]
       percent_perturb = float(nb_changed) / adv_x.reshape(-1).shape[0]
-
+      import matplotlib.pyplot as plt
+      plt.imsave('./jsma/2'+str(i)+'.png',np.reshape(adv_x, (img_rows, img_cols, nchannels)).squeeze())
       # Display the original and adversarial images side-by-side
       if viz_enabled:
         figure = pair_visual(
